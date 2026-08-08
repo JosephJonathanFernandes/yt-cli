@@ -96,3 +96,28 @@ def is_valid_regex(pattern: str) -> bool:
 def is_valid_filename_template(template: str) -> bool:
     """Basic sanity check that a yt-dlp output template contains a field."""
     return bool(re.search(r"%\([a-zA-Z_]+\)s|%\([a-zA-Z_]+\)\d*d", template))
+
+
+_EMBEDDED_URL_RE = re.compile(
+    r"https?://(?:www\.|m\.|music\.)?(?:youtube\.com|youtu\.be)/[^\s\"'<>]+",
+    re.IGNORECASE,
+)
+_TRAILING_PUNCTUATION = ".,;:!?)]}\"'"
+
+
+def extract_youtube_urls(text: str) -> list[str]:
+    """Find and normalize every YouTube URL embedded anywhere in ``text``.
+
+    Unlike :func:`is_valid_youtube_url`, this does not require the entire
+    string to be a URL. It is designed for free-form content such as CSV
+    cells, spreadsheet exports, or notes files where a link is mixed in
+    with titles, dates, or other text.
+    """
+    if not text:
+        return []
+    found: list[str] = []
+    for match in _EMBEDDED_URL_RE.findall(text):
+        candidate = match.rstrip(_TRAILING_PUNCTUATION)
+        if is_valid_youtube_url(candidate):
+            found.append(normalize_url(candidate))
+    return found

@@ -30,7 +30,7 @@ From the menu you can:
 - Download an entire playlist, with filtering (skip Shorts, filter by duration, keywords, upload date, and more)
 - Extract audio as MP3 at your chosen bitrate
 - Download subtitles or thumbnails on their own
-- Batch-download a list of URLs from a text file, CSV, or JSON file
+- Batch-download from a text file, CSV, or JSON file — links are found automatically even in files with extra columns (dates, titles, notes), and duplicate links are skipped
 - Search YouTube directly from the terminal
 - Stream a video straight into VLC without downloading anything
 - Review and manage a persistent download history

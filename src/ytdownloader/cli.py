@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-from rich.console import Console
 
 from ytdownloader import __version__
 from ytdownloader.config import get_config_manager
@@ -27,7 +26,7 @@ from ytdownloader.exceptions import YTDownloaderError
 from ytdownloader.history import get_history_manager
 from ytdownloader.logger import setup_logging
 from ytdownloader.ui.tables import video_details_table
-from ytdownloader.ui.theme import get_theme
+from ytdownloader.ui.theme import get_theme, make_console
 
 app = typer.Typer(
     name="ytdownloader",
@@ -35,7 +34,7 @@ app = typer.Typer(
     no_args_is_help=False,
     add_completion=True,
 )
-console = Console(theme=get_theme("dark"))
+console = make_console("dark")
 
 
 @app.callback(invoke_without_command=True)
@@ -151,7 +150,7 @@ def batch(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if str(file) == "-":
-        parse_result = parse_lines(sys.stdin.read())
+        parse_result = parse_lines(sys.stdin.read()).dedupe()
     else:
         parse_result = parse_batch_file(file)
 

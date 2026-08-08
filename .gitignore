@@ -14,3 +14,7 @@ venv/
 .coverage
 htmlcov/
 downloads/
+
+# Personal batch/playlist export files should never be committed.
+*.csv
+!tests/**/*.csv

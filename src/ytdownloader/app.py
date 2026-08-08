@@ -7,8 +7,6 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from rich.console import Console
-
 from ytdownloader.audio import download_audio
 from ytdownloader.config import get_config_manager
 from ytdownloader.constants import (
@@ -55,7 +53,7 @@ from ytdownloader.ui.tables import (
     search_results_table,
     video_details_table,
 )
-from ytdownloader.ui.theme import get_theme
+from ytdownloader.ui.theme import get_theme, make_console
 from ytdownloader.utils import get_free_disk_space_mb, open_file_or_folder
 from ytdownloader.validators import is_playlist_url, is_valid_youtube_url, normalize_url, parse_index_range
 from ytdownloader.video import download_video
@@ -69,7 +67,7 @@ class App:
     def __init__(self) -> None:
         self.config_manager = get_config_manager()
         self.settings: Settings = self.config_manager.load()
-        self.console = Console(theme=get_theme(self.settings.theme))
+        self.console = make_console(self.settings.theme)
         self.history_manager = get_history_manager()
 
     # ------------------------------------------------------------------
@@ -557,7 +555,7 @@ class App:
                 if not line:
                     break
                 lines.append(line)
-            parse_result = parse_lines("\n".join(lines))
+            parse_result = parse_lines("\n".join(lines)).dedupe()
 
         if parse_result.invalid_lines:
             self.console.print(f"[warning]{len(parse_result.invalid_lines)} invalid entries skipped.[/warning]")

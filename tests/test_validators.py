@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from ytdownloader.validators import (
+    extract_youtube_urls,
     is_playlist_url,
     is_valid_date_str,
     is_valid_filename_template,
@@ -92,3 +93,36 @@ def test_is_valid_regex():
 def test_is_valid_filename_template():
     assert is_valid_filename_template("%(title)s.%(ext)s") is True
     assert is_valid_filename_template("no_placeholders") is False
+
+
+def test_extract_youtube_urls_from_plain_url():
+    assert extract_youtube_urls("https://www.youtube.com/watch?v=wbFXZhq8bnw") == [
+        "https://www.youtube.com/watch?v=wbFXZhq8bnw"
+    ]
+
+
+def test_extract_youtube_urls_embedded_in_title_with_emoji():
+    text = "Abstract Posters - Beat Shake | Music Visualization\U0001f5a4\U0001f3b6\U0001f48e https://www.youtube.com/watch?v=wbFXZhq8bnw"
+    assert extract_youtube_urls(text) == ["https://www.youtube.com/watch?v=wbFXZhq8bnw"]
+
+
+def test_extract_youtube_urls_strips_trailing_punctuation():
+    text = "check this out (https://youtu.be/dQw4w9WgXcQ)."
+    assert extract_youtube_urls(text) == ["https://youtu.be/dQw4w9WgXcQ"]
+
+
+def test_extract_youtube_urls_no_link_returns_empty():
+    assert extract_youtube_urls("just a regular title with no link") == []
+
+
+def test_extract_youtube_urls_multiple_in_one_string():
+    text = "https://youtu.be/dQw4w9WgXcQ and also https://www.youtube.com/watch?v=abcdefghijk"
+    result = extract_youtube_urls(text)
+    assert result == [
+        "https://youtu.be/dQw4w9WgXcQ",
+        "https://www.youtube.com/watch?v=abcdefghijk",
+    ]
+
+
+def test_extract_youtube_urls_empty_string():
+    assert extract_youtube_urls("") == []
