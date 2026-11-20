@@ -54,6 +54,11 @@ def test_normalize_url_keeps_full_url():
     assert normalize_url(url) == url
 
 
+def test_normalize_url_handles_uppercase_scheme():
+    assert normalize_url("HTTPS://youtu.be/dQw4w9WgXcQ") == "https://youtu.be/dQw4w9WgXcQ"
+    assert normalize_url("HTTP://www.youtube.com/watch?v=abc") == "http://www.youtube.com/watch?v=abc"
+
+
 def test_parse_index_range_simple_range():
     assert parse_index_range("2-5", 10) == [2, 3, 4, 5]
 

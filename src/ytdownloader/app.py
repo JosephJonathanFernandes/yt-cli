@@ -641,6 +641,8 @@ class App:
         if action is None:
             return
         output_dir = Path(self.settings.output_dir)
+        if not self._check_disk_space(output_dir):
+            return
         if action == "mp4":
             resolution = prompt_choice(self.console, "Resolution", VIDEO_RESOLUTIONS, default="best") or "best"
             with build_progress() as progress:

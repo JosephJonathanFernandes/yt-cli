@@ -32,11 +32,14 @@ def normalize_url(text: str) -> str:
     text = text.strip()
     if _VIDEO_ID_RE.match(text):
         return f"https://www.youtube.com/watch?v={text}"
-    if text.startswith("www."):
+    lower = text.lower()
+    if lower.startswith("https://"):
+        return "https://" + text[8:]
+    if lower.startswith("http://"):
+        return "http://" + text[7:]
+    if lower.startswith("www."):
         return f"https://{text}"
-    if not text.startswith("http"):
-        return f"https://{text}"
-    return text
+    return f"https://{text}"
 
 
 def parse_index_range(spec: str, total: int) -> list[int]:
